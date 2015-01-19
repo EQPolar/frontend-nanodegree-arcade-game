@@ -12,7 +12,7 @@ APP.ENIMIES = 6;
 APP.ENEMY_SPEED = [ 75, 125, 200, 250 ];
 
 // :=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
-// these should not be changed, unless bug found ;)
+// below this line should not be changed, unless bug found ;)
 // :=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
 
 // stores the y-value of each row.
