@@ -9,28 +9,28 @@ var i;
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 
+// :=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
 // Enemy Constructor
+// :=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
 var Enemy = function (row) {
-    this.x = this.randomStart();
+    this.x = this.randomStartXPosition();
     this.y = this.randomRow();
     this.speed = this.randomSpeed();
     this.sprite = 'images/enemy-bug.png';
   };
 
 // put enemy in random starting x cord
-Enemy.prototype.randomStart = function () {
-  var tmp = (Math.random() * (APP.ENEMY_MAX_X - APP.ENEMY_START_X) - 100);
-  console.log(tmp);
-  return tmp;
+Enemy.prototype.randomStartXPosition = function () {
+  return (Math.random() * (APP.ENEMY_MAX_X - APP.ENEMY_START_X) - 100);
 };
 
-// put enemy in a random row 
+// return random a y-cord that represents a random row between row 1 and 
+// row 4 on the game canvas.
 Enemy.prototype.randomRow = function () {
-  // enemies need to start in a random row between 1 and 4
   return APP.ROWS[Math.ceil(Math.random() * 4)];
 };
 
-// random speed as defined in the global APP.ENEMY_SPEED
+// random speed as defined in the global array APP.ENEMY_SPEED
 Enemy.prototype.randomSpeed = function () {
   return APP.ENEMY_SPEED[Math.floor(Math.random() * APP.ENEMY_SPEED.length)];
 };
@@ -43,12 +43,14 @@ Enemy.prototype.reset = function () {
 
 // move enemy
 Enemy.prototype.update = function (dt) {
-  // move enemy at is assigned speed
+  // move the enemy to the right 
   this.x = this.x + (this.speed * dt);
   
   // check to see if enemy is off edge of canvas
   if (this.x > APP.ENEMY_MAX_X) {
     this.reset();
+  
+  // player class is responsbile for collision detection
   }
 };
 
@@ -57,7 +59,9 @@ Enemy.prototype.render = function () {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Player constructor
+// :=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
+// Player Constructor
+// :=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
 var Player = function () {
   this.x = APP.PLAYER_START_X;
   this.y = APP.PLAYER_START_Y;
@@ -65,9 +69,9 @@ var Player = function () {
   this.sprite = 'images/char-boy.png';
 };
 
-// r1,r2 are a bound box, function returns true
-// if bound boxes are touching. 
-// algoritm from Udacity HTML5 Game course
+// r1,r2 represent the four corners of a bound box, this function returns true if 
+// r1 or r2 are touching. 
+// Algoritm from Udacity HTML5 Game course
 Player.prototype.isIntersecting = function (r1, r2) {
   if (r1.right > r2.left && r1.left < r2.right &&
       r1.bottom > r2.top && r1.top < r2.bottom) {
@@ -76,13 +80,17 @@ Player.prototype.isIntersecting = function (r1, r2) {
   return false;
 };
 
-// detect if player is touching enemy using bound boxes.
-// playerBounds could be changed to calulate only when
-// the player moves and stored as an instance variable
-// if optmization is necessary.
+// This function will determine is a player is touching an enemy using bound
+// boxes. It will calculate a bound box for the player and each enemy and 
+// then call the helper function isIntersecting to see the bound boxes intersect
 Player.prototype.isTouchingEnemy = function () {
   // using i from global scope
   var playerBounds, enemyBounds;
+  
+  // an optimization here could be made where the playerBounds are only
+  // calulated when the player moves.  However, since the game runs fine
+  // like this, I choose to keep it this way for now to keep the code as 
+  // readable and logical as possbile
   playerBounds = {
     'left' : this.x + APP.PLAYER_LEFT_OFFSET,
     'top' : this.y + APP.PLAYER_TOP_OFFSET,
@@ -90,8 +98,8 @@ Player.prototype.isTouchingEnemy = function () {
     'bottom' : this.y  + APP.PLAYER_TOP_OFFSET + 10
   };
   
-  // a for loop is used here because if the array.forEach(x,y,z)
-  // is used, the this used later is no longer bound to player.
+  // a for loop is used here because if the array.forEach(x,y,z) style
+  // is used, the 'this.' used later is no longer bound to player.
   for (i = 0; i < allEnemies.length; i++) {
     enemyBounds = {
       'left' : allEnemies[i].x + APP.ENEMY_LEFT_OFFSET,
@@ -112,6 +120,8 @@ Player.prototype.reset = function () {
   this.y = APP.PLAYER_START_Y;
 };
 
+// if player moves off the canvas they will be moved back to the 
+// max allowed position before rendering takes place
 Player.prototype.keepOnCanvas = function () {
   if (this.x < APP.PLAYER_MIN_X) {
     this.x = APP.PLAYER_MIN_X;
@@ -143,6 +153,9 @@ Player.prototype.update = function () {
   this.keepOnCanvas();
 };
 
+// This scoring system is simple so the player class takes care
+// on rendering it.  If a more complex scoring system is needed
+// it would likely be better to create a Score object 
 Player.prototype.render = function () {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
   ctx.font = "20px Veranda";

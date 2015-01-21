@@ -1,6 +1,13 @@
-frontend-nanodegree-arcade-game
-===============================
+### Classic Arcade Game Submission
 
-Students should use this rubric: https://www.udacity.com/course/viewer#!/c-ud015/l-3072058665/m-3072588797
+This project is for assignment P3 of the UdaCity Front End Web Nano Degree
 
-for self-checking their submission.
+## Running the Game
+
+[This game can be run from this repository by following this link.] (http://)
+
+You may also download the game to your computer and open the index.html
+in your web browser.
+
+If you are interested in changing the difficulty of the game see the instruction in the global.js files.
+
